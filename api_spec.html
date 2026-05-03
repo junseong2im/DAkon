@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>DeepSR — Backend API Specification v1.0</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sofia+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --ink: #141413;
+    --text-sec: #555;
+    --text-muted: #888;
+    --border: #e0ddd9;
+    --bg-code: #f5f3f0;
+    --accent: #2962FF;
+    --success: #2D8A56;
+    --danger: #C0392B;
+    --warning: #E67E22;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Sofia Sans', -apple-system, sans-serif;
+    color: var(--ink);
+    line-height: 1.7;
+    padding: 48px 64px;
+    max-width: 900px;
+    margin: 0 auto;
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+    color: var(--accent);
+  }
+  .subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 16px;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 36px;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--accent);
+    color: var(--ink);
+    letter-spacing: -0.3px;
+  }
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 24px;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+
+  p { margin-bottom: 10px; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px;
+    font-size: 13px;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+  }
+  th {
+    background: var(--bg-code);
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-sec);
+  }
+  td code {
+    background: var(--bg-code);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+
+  pre {
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    overflow-x: auto;
+    margin: 12px 0 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+
+  .endpoint {
+    display: inline-block;
+    background: var(--ink);
+    color: #fff;
+    padding: 4px 14px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 8px 0 12px;
+  }
+  .endpoint .method {
+    color: #8be9fd;
+    font-weight: 700;
+  }
+
+  .note {
+    background: rgba(41,98,255,0.06);
+    border-left: 3px solid var(--accent);
+    padding: 10px 16px;
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    color: var(--text-sec);
+    margin: 12px 0 20px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .badge--required { background: rgba(192,57,43,0.1); color: var(--danger); }
+  .badge--optional { background: rgba(136,136,136,0.1); color: var(--text-muted); }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  ul, ol { margin: 8px 0 16px 20px; }
+  li { margin-bottom: 4px; }
+
+  @media print {
+    body { padding: 24px 32px; font-size: 12px; }
+    h1 { font-size: 22px; }
+    h2 { font-size: 16px; margin-top: 24px; break-after: avoid; }
+    h3 { font-size: 14px; margin-top: 16px; break-after: avoid; }
+    pre { font-size: 10px; padding: 10px 14px; break-inside: avoid; }
+    table { font-size: 11px; break-inside: avoid; }
+    .note { break-inside: avoid; }
+    .no-print { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<h1>DeepSR — Backend API Specification v1.0</h1>
+<div class="subtitle">
+  프론트엔드 ↔ 백엔드 연동 명세서 &nbsp;|&nbsp; 최종 업데이트: 2026-05-03 &nbsp;|&nbsp; 작성: Frontend Team
+  <br>
+  <button class="no-print" onclick="window.print()" style="margin-top:8px;padding:6px 16px;background:#141413;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;">📄 PDF로 저장 (Ctrl+P)</button>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>0. 공통 사항</h2>
+
+<h3>Base URL</h3>
+<pre>Production: https://api.deepsr.com/v1
+Development: http://localhost:8000/v1</pre>
+
+<h3>인증 방식</h3>
+<pre>Authorization: Bearer &lt;JWT_TOKEN&gt;
+
+커스텀 헤더 (BYOK 키 전달 시):
+X-LLM-Key: sk-xxxxx
+X-Market-Key: xxxxx</pre>
+
+<h3>공통 응답 형식</h3>
+<pre>{
+  "status": "success" | "error",
+  "data": { ... },
+  "message": "설명 메시지 (에러 시)",
+  "timestamp": "2026-05-03T14:00:00+09:00"
+}</pre>
+
+<h3>에러 코드</h3>
+<table>
+  <tr><th>HTTP</th><th>의미</th><th>설명</th></tr>
+  <tr><td><code>200</code></td><td>OK</td><td>정상 응답</td></tr>
+  <tr><td><code>400</code></td><td>Bad Request</td><td>잘못된 파라미터</td></tr>
+  <tr><td><code>401</code></td><td>Unauthorized</td><td>인증 실패 / API 키 누락</td></tr>
+  <tr><td><code>404</code></td><td>Not Found</td><td>리소스 없음</td></tr>
+  <tr><td><code>429</code></td><td>Too Many Requests</td><td>API 호출 한도 초과</td></tr>
+  <tr><td><code>500</code></td><td>Internal Server Error</td><td>서버 내부 오류</td></tr>
+</table>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>1. 시장 데이터 API</h2>
+
+<h3>1.1 OHLCV (캔들스틱 데이터)</h3>
+<p>프론트 사용처: <code>Charts.createCandlestick()</code>, <code>Widget.renderChart()</code></p>
+<div class="endpoint"><span class="method">GET</span> /market/ohlcv</div>
+
+<table>
+  <tr><th>파라미터</th><th>타입</th><th>필수</th><th>설명</th><th>예시</th></tr>
+  <tr><td><code>symbol</code></td><td>string</td><td><span class="badge badge--required">필수</span></td><td>종목 심볼</td><td><code>005930</code>, <code>AAPL</code></td></tr>
+  <tr><td><code>market</code></td><td>string</td><td><span class="badge badge--required">필수</span></td><td>시장 코드</td><td><code>KR</code>, <code>US</code></td></tr>
+  <tr><td><code>interval</code></td><td>string</td><td><span class="badge badge--optional">선택</span></td><td>캔들 간격</td><td><code>5m</code>, <code>1h</code>, <code>1d</code></td></tr>
+  <tr><td><code>count</code></td><td>number</td><td><span class="badge badge--optional">선택</span></td><td>데이터 포인트 수</td><td><code>60</code> (기본)</td></tr>
+  <tr><td><code>from</code></td><td>string</td><td><span class="badge badge--optional">선택</span></td><td>시작일 (ISO 8601)</td><td><code>2026-01-01</code></td></tr>
+  <tr><td><code>to</code></td><td>string</td><td><span class="badge badge--optional">선택</span></td><td>종료일 (ISO 8601)</td><td><code>2026-05-03</code></td></tr>
+</table>
+
+<p><strong>Response</strong></p>
+<pre>{
+  "status": "success",
+  "data": {
+    "symbol": "005930",
+    "market": "KR",
+    "name": "삼성전자",
+    "currency": "KRW",
+    "candles": [
+      {
+        "time": "2026-04-01",
+        "open": 72000,
+        "high": 73500,
+        "low": 71800,
+        "close": 73200,
+        "volume": 12500000
+      }
+    ]
+  }
+}</pre>
+<div class="note">
+  <strong>프론트 매핑:</strong> <code>data.candles</code> → <code>Charts.createCandlestick(id, candles)</code><br>
+  TradingView Lightweight Charts v5 포맷. <code>time</code>은 <code>YYYY-MM-DD</code> 문자열.
+</div>
+
+<hr>
+
+<h3>1.2 실시간 시세 (글로벌 지수)</h3>
+<p>프론트 사용처: <code>Landing.renderIndices()</code>, <code>Landing.renderFX()</code></p>
+<div class="endpoint"><span class="method">GET</span> /market/indices</div>
+<pre>{
+  "status": "success",
+  "data": {
+    "indices": [
+      {
+        "key": "kospi",
+        "name": "KOSPI",
+        "country": "KR",
+        "value": 2665.42,
+        "change": 15.28,
+        "changePct": 0.58,
+        "direction": "up",
+        "sparkline": [
+          { "time": "2026-04-01", "value": 2630.5 }
+        ]
+      }
+    ],
+    "fx": [
+      {
+        "pair": "USD/KRW",
+        "rate": 1380.50,
+        "change": -2.30,
+        "changePct": -0.17,
+        "direction": "down"
+      }
+    ]
+  }
+}</pre>
+
+<hr>
+
+<h3>1.3 시가총액 Top N</h3>
+<p>프론트 사용처: <code>Landing.renderTop5Tables()</code></p>
+<div class="endpoint"><span class="method">GET</span> /market/top?market=kospi&amp;limit=5</div>
+<pre>{
+  "status": "success",
+  "data": {
+    "market": "kospi",
+    "stocks": [
+      {
+        "rank": 1,
+        "name": "삼성전자",
+        "symbol": "005930",
+        "price": 61200,
+        "changePct": -1.28,
+        "marketCap": "364.5조",
+        "volume": "1.2조"
+      }
+    ]
+  }
+}</pre>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>2. LLM 분석 API</h2>
+
+<h3>2.1 기술적 지표 분석</h3>
+<p>프론트 사용처: <code>Report.generateIndicatorData()</code>, <code>Widget.renderScorecard()</code></p>
+<div class="endpoint"><span class="method">POST</span> /analysis/indicators</div>
+
+<p><strong>Request</strong></p>
+<pre>{
+  "symbol": "005930",
+  "market": "KR",
+  "indicators": ["RSI", "MACD", "Bollinger", "Volume", "MA"],
+  "period": "3M"
+}</pre>
+
+<p><strong>Response</strong></p>
+<pre>{
+  "status": "success",
+  "data": {
+    "symbol": "005930",
+    "name": "삼성전자",
+    "indicators": {
+      "RSI": {
+        "name": "RSI (14)",
+        "value": 48,
+        "signal": "hold",
+        "weight": 0.25,
+        "description": "중립 구간 — 추세 관찰 필요"
+      },
+      "MACD": {
+        "name": "MACD (12,26,9)",
+        "value": -0.59,
+        "signal": "sell",
+        "weight": 0.25,
+        "description": "데드크로스 — MACD가 시그널선 하회"
+      }
+    },
+    "compositeScore": 49,
+    "compositeSignal": "hold",
+    "compositeLabel": "관망"
+  }
+}</pre>
+
+<hr>
+
+<h3>2.2 AI 인사이트 생성</h3>
+<p>프론트 사용처: <code>Report.generateInsights()</code>, <code>Widget.renderTextBriefing()</code></p>
+<div class="endpoint"><span class="method">POST</span> /analysis/insights</div>
+
+<p><strong>Request</strong></p>
+<pre>{
+  "symbol": "005930",
+  "market": "KR",
+  "topic": "market",
+  "compositeScore": 49,
+  "indicators": { "RSI": "hold", "MACD": "sell", "Bollinger": "buy" }
+}</pre>
+
+<p><strong>Response</strong></p>
+<pre>{
+  "status": "success",
+  "data": {
+    "insights": [
+      "삼성전자 종합 투자 점수 49점으로 \"관망\" 판단.",
+      "현재 주요 지표 중 다수가 부정적 신호를 나타내고 있습니다.",
+      "단기적으로 방향성 확인 후 포지션 진입 권장이 필요합니다."
+    ],
+    "conflict": {
+      "detected": true,
+      "buyIndicators": ["볼린저 밴드 (20,2)"],
+      "sellIndicators": ["MACD (12,26,9)"],
+      "accuracy": 86,
+      "corrected": "관망 전환",
+      "reasoning": "과거 유사 패턴에서 86% 확률로 횡보 추세 확인"
+    }
+  }
+}</pre>
+
+<div class="note">
+  <strong>프론트 매핑:</strong> <code>data.insights</code> → 3줄 브리핑.<br>
+  <code>data.conflict</code> → Conflict Watchdog 섹션 (null이면 숨김).
+</div>
+
+<hr>
+
+<h3>2.3 자연어 프롬프트 분석</h3>
+<p>프론트 사용처: <code>Prompt.parseCommand()</code> — 현재 로컬 파싱, 향후 서버 위임 가능</p>
+<div class="endpoint"><span class="method">POST</span> /analysis/prompt</div>
+
+<pre>// Request
+{ "input": "삼성전자 차트 보여줘" }
+
+// Response
+{
+  "data": {
+    "widgetConfig": {
+      "type": "chart",
+      "chartType": "candlestick",
+      "title": "삼성전자",
+      "symbol": "005930",
+      "market": "KR",
+      "source": "realtime",
+      "gs": { "w": 6, "h": 4 }
+    }
+  }
+}</pre>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>3. 포트폴리오 API</h2>
+
+<h3>3.1 섹터별 비중</h3>
+<div class="endpoint"><span class="method">GET</span> /portfolio/sectors</div>
+<pre>{
+  "data": {
+    "labels": ["기술주", "금융주", "소비재", "에너지", "헬스케어"],
+    "series": [35, 22, 18, 15, 10]
+  }
+}</pre>
+
+<h3>3.2 종목 비교</h3>
+<div class="endpoint"><span class="method">POST</span> /portfolio/compare</div>
+<pre>// Request
+{ "symbols": ["005930", "000660", "AAPL"], "period": "3M" }
+
+// Response
+{
+  "data": {
+    "comparisons": [
+      { "symbol": "005930", "name": "삼성전자", "return": -2.5 },
+      { "symbol": "000660", "name": "SK하이닉스", "return": 8.3 },
+      { "symbol": "AAPL", "name": "Apple", "return": 5.1 }
+    ]
+  }
+}</pre>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>4. WebSocket (실시간)</h2>
+
+<div class="endpoint"><span class="method">WS</span> /ws/realtime</div>
+
+<pre>// Subscribe
+{ "action": "subscribe", "channels": ["kospi"], "symbols": ["005930"] }
+
+// Server Push (tick)
+{
+  "type": "tick",
+  "symbol": "005930",
+  "data": {
+    "time": "2026-05-03T14:30:00+09:00",
+    "price": 61250,
+    "change": 50,
+    "changePct": 0.08,
+    "volume": 125000
+  }
+}
+
+// Connection Status
+{ "type": "status", "status": "connected" }
+{ "type": "status", "status": "disconnected", "reason": "heartbeat_timeout" }</pre>
+
+<div class="note">
+  <strong>프론트 매핑:</strong><br>
+  <code>Charts.appendPoint(id, { time, value })</code> → 실시간 차트 업데이트<br>
+  <code>Store.setWsStatus(status)</code> → GNB 연결 상태 배지
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>5. 프론트 → 백엔드 교체 가이드</h2>
+
+<p>현재 <code>mock-data.js</code>의 함수들을 아래 API 호출로 교체하면 됩니다:</p>
+
+<table>
+  <tr><th>현재 Mock 함수</th><th>교체 API</th><th>파일:라인</th></tr>
+  <tr><td><code>MockData.generateCandles()</code></td><td><code>GET /market/ohlcv</code></td><td>widget.js:74</td></tr>
+  <tr><td><code>MockData.generateLine()</code></td><td><code>GET /market/ohlcv</code></td><td>widget.js:79</td></tr>
+  <tr><td><code>MockData.generateDonut()</code></td><td><code>GET /portfolio/sectors</code></td><td>widget.js:84</td></tr>
+  <tr><td><code>MockData.generateScorecard()</code></td><td><code>POST /analysis/indicators</code></td><td>widget.js:111</td></tr>
+  <tr><td><code>MockData.generateBriefing()</code></td><td><code>POST /analysis/insights</code></td><td>widget.js:134</td></tr>
+  <tr><td><code>MockData.generateConflict()</code></td><td><code>POST /analysis/insights</code></td><td>widget.js:61</td></tr>
+  <tr><td>Landing 지수/환율 (하드코딩)</td><td><code>GET /market/indices</code></td><td>landing.js</td></tr>
+  <tr><td>Report 지표 (로컬 생성)</td><td><code>POST /analysis/indicators</code></td><td>report.js:17</td></tr>
+  <tr><td><code>WebSocketSim</code></td><td><code>WS /ws/realtime</code></td><td>websocket.js</td></tr>
+</table>
+
+<hr>
+
+<h2>6. 환경 변수</h2>
+
+<h3>백엔드 서버</h3>
+<table>
+  <tr><th>변수명</th><th>설명</th><th>예시</th></tr>
+  <tr><td><code>PORT</code></td><td>서버 포트</td><td><code>8000</code></td></tr>
+  <tr><td><code>DATABASE_URL</code></td><td>DB 연결</td><td><code>postgresql://...</code></td></tr>
+  <tr><td><code>REDIS_URL</code></td><td>캐시 서버</td><td><code>redis://localhost:6379</code></td></tr>
+  <tr><td><code>OPENAI_API_KEY</code></td><td>LLM (프록시 시)</td><td><code>sk-...</code></td></tr>
+  <tr><td><code>ALPHA_VANTAGE_KEY</code></td><td>시장 데이터</td><td>—</td></tr>
+  <tr><td><code>CORS_ORIGINS</code></td><td>허용 도메인</td><td><code>http://localhost:3456</code></td></tr>
+</table>
+
+<h3>프론트엔드 (localStorage)</h3>
+<table>
+  <tr><th>키</th><th>설명</th></tr>
+  <tr><td><code>deepsr_settings</code></td><td>JSON: llmProvider, llmModel, llmKey, marketProvider, marketKey</td></tr>
+  <tr><td><code>deepsr_api_key</code></td><td>레거시 단일키 (하위호환)</td></tr>
+</table>
+
+<div class="note" style="margin-top:32px;">
+  <strong>📌 참고:</strong> API 키는 BYOK 정책상 서버에 저장하지 않습니다. 프론트엔드 localStorage에만 암호화 저장됩니다.<br>
+  이 문서는 프론트엔드 팀이 작성했으며, 백엔드 팀은 위 스펙에 맞춰 API를 구현해 주세요.
+</div>
+
+</body>
+</html>
