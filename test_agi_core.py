@@ -181,18 +181,28 @@ def test_nl_parser():
     test_separator("TEST 4: 자연어 파서 (규칙 기반 폴백)")
 
     test_cases = [
+        # 기존 테스트
         ("애플 주가 3개월치 캔들차트로 띄워줘", "AAPL", "candlestick", "3mo", "stock"),
         ("비트코인 1년 라인차트", "BTC/USDT", "line", "1y", "crypto"),
         ("테슬라 6개월 볼린저밴드", "TSLA", "candlestick", "6mo", "stock"),
         ("삼성전자 한달 RSI MACD", "005930.KS", "candlestick", "1mo", "stock"),
         ("이더리움 일주일", "ETH/USDT", "candlestick", "5d", "crypto"),
+        # 신규: 확장 매핑 테스트 (기존에는 AAPL로 빠지던 종목들)
+        ("현대차 3개월 차트", "005380.KS", "candlestick", "3mo", "stock"),
+        ("LG에너지솔루션 6개월", "373220.KS", "candlestick", "6mo", "stock"),
+        ("포스코 1년 RSI", "005490.KS", "candlestick", "1y", "stock"),
+        ("카카오 한달 MACD", "035720.KQ", "candlestick", "1mo", "stock"),
+        ("솔라나 3개월 라인차트", "SOL/USDT", "line", "3mo", "crypto"),
+        # 신규: 동적 기간 추출 테스트
+        ("삼성전자 2개월", "005930.KS", "candlestick", "2mo", "stock"),
+        ("애플 10년", "AAPL", "candlestick", "10y", "stock"),
     ]
 
     for user_input, expected_ticker, expected_chart, expected_period, expected_asset in test_cases:
         result = parse_query_fallback(user_input)
-        status = "✓" if result.target_ticker == expected_ticker else "✗"
-        print(f"  {status} \"{user_input}\"")
-        print(f"      → ticker={result.target_ticker}, chart={result.chart_type}, "
+        status = "PASS" if result.target_ticker == expected_ticker else "FAIL"
+        print(f"  [{status}] \"{user_input}\"")
+        print(f"      -> ticker={result.target_ticker}, chart={result.chart_type}, "
               f"period={result.period}, asset={result.asset_type}")
         print(f"        indicators={result.required_indicators}")
 
@@ -201,7 +211,17 @@ def test_nl_parser():
         assert result.period == expected_period, f"Expected {expected_period}, got {result.period}"
         assert result.asset_type == expected_asset, f"Expected {expected_asset}, got {result.asset_type}"
 
-    print("\n  ✓ 자연어 파서 테스트 통과!")
+    # 동적 추출 테스트: 매핑에 없는 종목
+    print("\n  -- 동적 추출 테스트 --")
+    r1 = parse_query_fallback("005930 3개월 차트")
+    print(f"  [6자리 코드] '005930 3개월 차트' -> {r1.target_ticker}")
+    assert r1.target_ticker == "005930.KS", f"Expected 005930.KS, got {r1.target_ticker}"
+
+    r2 = parse_query_fallback("PLTR 1년")
+    print(f"  [영문 티커] 'PLTR 1년' -> {r2.target_ticker}")
+    assert r2.target_ticker == "PLTR", f"Expected PLTR, got {r2.target_ticker}"
+
+    print("\n  PASS: 자연어 파서 테스트 통과!")
 
 
 # ─── 테스트 5: 시장 조건별 충돌 시나리오 ────────────────────────────────────────
