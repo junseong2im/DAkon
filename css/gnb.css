@@ -1,0 +1,254 @@
+/* ============================================================
+   GNB — Global Navigation Bar (Floating Pill)
+   ============================================================ */
+
+.gnb {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--gnb-height);
+  padding: 0 var(--space-3);
+  position: relative;
+  z-index: var(--z-gnb);
+}
+
+.gnb__pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 100%;
+  height: 52px;
+  margin: 6px var(--space-2);
+  padding: 0 var(--space-3);
+  background: var(--color-white);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-1);
+  gap: var(--space-2);
+}
+
+/* ── Logo ── */
+.gnb__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+.gnb__logo-icon {
+  flex-shrink: 0;
+}
+
+.gnb__logo-text {
+  font-size: 20px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.4px;
+  color: var(--color-ink-black);
+  margin-left: 4px;
+}
+
+/* ── Navigation Tabs ── */
+.gnb__tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gnb__tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-slate-gray);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  border: none;
+  background: none;
+  white-space: nowrap;
+}
+.gnb__tab:hover {
+  background: var(--color-canvas-cream);
+  color: var(--color-ink-black);
+}
+.gnb__tab.active {
+  background: var(--color-ink-black);
+  color: var(--color-canvas-cream);
+}
+.gnb__tab svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ── Center Container ── */
+.gnb__center {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  justify-content: center;
+}
+
+/* ── Template Selector ── */
+.gnb__template-select {
+  position: relative;
+}
+
+.gnb__template-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 20px;
+  background: var(--color-canvas-cream);
+  border: 1.5px solid var(--color-dust-taupe);
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-ink-black);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+  white-space: nowrap;
+}
+.gnb__template-btn:hover {
+  border-color: var(--color-ink-black);
+  background: var(--color-lifted-cream);
+}
+.gnb__template-btn:active {
+  transform: scale(0.97);
+}
+
+.gnb__template-chevron {
+  width: 12px;
+  height: 12px;
+  transition: transform var(--transition-fast);
+}
+.gnb__template-btn.open .gnb__template-chevron {
+  transform: rotate(180deg);
+}
+
+.gnb__template-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  min-width: 220px;
+  background: var(--color-white);
+  border-radius: var(--radius-button);
+  box-shadow: var(--shadow-2);
+  padding: var(--space-1) 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-base), transform var(--transition-base);
+  z-index: 10;
+}
+.gnb__template-dropdown.open {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateX(-50%) translateY(0);
+}
+
+.gnb__template-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  width: 100%;
+  padding: 10px var(--space-2);
+  font-size: 14px;
+  font-weight: var(--font-weight-body);
+  color: var(--color-ink-black);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  border: none;
+  background: none;
+  text-align: left;
+}
+.gnb__template-option:hover {
+  background: var(--color-canvas-cream);
+}
+.gnb__template-option.active {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary-blue);
+}
+.gnb__template-option.active::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-primary-blue);
+  flex-shrink: 0;
+}
+
+/* ── Right Actions ── */
+.gnb__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+.gnb__action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  color: var(--color-ink-black);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+.gnb__action-btn:hover {
+  background: var(--color-canvas-cream);
+  border-color: var(--color-dust-taupe);
+}
+.gnb__action-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── WebSocket Status Badge ── */
+.gnb__ws-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.3px;
+  transition: all var(--transition-base);
+}
+
+.gnb__ws-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background var(--transition-base);
+}
+
+.gnb__ws-badge--connected {
+  background: rgba(45, 138, 86, 0.1);
+  color: var(--color-success);
+}
+.gnb__ws-badge--connected .gnb__ws-dot {
+  background: var(--color-success);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.gnb__ws-badge--disconnected {
+  background: rgba(192, 57, 43, 0.1);
+  color: var(--color-danger);
+}
+.gnb__ws-badge--disconnected .gnb__ws-dot {
+  background: var(--color-danger);
+  animation: pulse-dot 1s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.7); }
+}

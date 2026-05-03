@@ -1,0 +1,355 @@
+/* ============================================================
+   Modals & Overlays — Smart Focus, Settings, Toast
+   ============================================================ */
+
+/* ── Smart Focus ── */
+.smart-focus {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-smart-focus);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-slow);
+}
+.smart-focus.active {
+  pointer-events: all;
+  opacity: 1;
+}
+
+.smart-focus__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 20, 19, 0.6);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+
+.smart-focus__content {
+  position: relative;
+  width: 80vw;
+  height: 80vh;
+  max-width: 1200px;
+  background: var(--color-white);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-3);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+  transform: scale(0.9);
+  transition: transform var(--transition-spring);
+}
+.smart-focus.active .smart-focus__content {
+  transform: scale(1);
+}
+/* Widget inside Smart Focus fills the content area */
+.smart-focus__content > .widget {
+  flex: 1;
+  min-height: 0;
+}
+.smart-focus__content .widget-body__wrapper {
+  flex: 1;
+  min-height: 0;
+}
+
+.smart-focus__close {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-canvas-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-ink-black);
+  z-index: 5;
+  transition: background var(--transition-fast);
+}
+.smart-focus__close:hover {
+  background: var(--color-dust-taupe);
+}
+.smart-focus__close svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Settings Modal ── */
+.settings-modal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+.settings-modal.active,
+.settings-modal.open {
+  pointer-events: all;
+  opacity: 1;
+}
+
+.settings-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 20, 19, 0.4);
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+}
+
+.settings-modal__card {
+  position: relative;
+  width: 440px;
+  max-width: 90vw;
+  background: var(--color-lifted-cream);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-2);
+  padding: var(--space-5);
+  z-index: 1;
+  transform: translateY(20px);
+  transition: transform var(--transition-spring);
+}
+.settings-modal.active .settings-modal__card,
+.settings-modal.open .settings-modal__card {
+  transform: translateY(0);
+}
+
+.settings-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.settings-modal__title {
+  font-size: var(--h3-size);
+  font-weight: var(--h3-weight);
+  letter-spacing: var(--h3-ls);
+}
+
+.settings-modal__close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-slate-gray);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+.settings-modal__close:hover {
+  background: var(--color-canvas-cream);
+  color: var(--color-ink-black);
+}
+.settings-modal__close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.settings-modal__field {
+  margin-bottom: var(--space-3);
+}
+
+.settings-modal__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--eyebrow-ls);
+  color: var(--color-slate-gray);
+  margin-bottom: var(--space-1);
+}
+.settings-modal__label::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-light-signal-orange);
+}
+
+.settings-modal__input {
+  width: 100%;
+  height: 48px;
+  padding: 12px var(--space-3);
+  background: var(--color-white);
+  border: 1.5px solid var(--color-dust-taupe);
+  border-radius: var(--radius-pill);
+  font-size: 15px;
+  font-weight: var(--font-weight-body);
+  color: var(--color-ink-black);
+  transition: border-color var(--transition-fast);
+}
+.settings-modal__input:focus {
+  border-color: var(--color-ink-black);
+}
+.settings-modal__input[type="password"] {
+  letter-spacing: 4px;
+}
+
+.settings-modal__save {
+  width: 100%;
+  height: 48px;
+  background: var(--color-ink-black);
+  color: var(--color-canvas-cream);
+  border: 1.5px solid var(--color-ink-black);
+  border-radius: var(--radius-button);
+  font-size: var(--nav-size);
+  font-weight: var(--nav-weight);
+  letter-spacing: var(--nav-ls);
+  margin-top: var(--space-3);
+  cursor: pointer;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+.settings-modal__save:hover {
+  opacity: 0.9;
+}
+.settings-modal__save:active {
+  transform: scale(0.97);
+}
+
+/* ── Settings Modal Groups ── */
+.settings-modal__group {
+  margin-bottom: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-canvas-cream);
+  border-radius: 12px;
+}
+.settings-modal__group-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-ink-black);
+  margin-bottom: var(--space-2);
+}
+.settings-modal__group .settings-modal__field {
+  margin-bottom: var(--space-2);
+}
+.settings-modal__group .settings-modal__field:last-child {
+  margin-bottom: 0;
+}
+
+.settings-modal__select {
+  width: 100%;
+  height: 42px;
+  padding: 8px var(--space-2);
+  background: var(--color-white);
+  border: 1.5px solid var(--color-dust-taupe);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 450;
+  color: var(--color-ink-black);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23696969' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+.settings-modal__select:focus {
+  border-color: var(--color-ink-black);
+}
+
+.settings-modal__byok-notice {
+  font-size: 11px;
+  color: var(--color-slate-gray);
+  text-align: center;
+  padding: 8px 12px;
+  background: rgba(41, 98, 255, 0.04);
+  border-radius: 8px;
+  line-height: 1.5;
+}
+
+/* ── Toast Notification ── */
+.toast-container {
+  position: fixed;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px var(--space-3);
+  background: var(--color-white);
+  border-radius: var(--radius-button);
+  box-shadow: var(--shadow-2);
+  pointer-events: all;
+  transform: translateX(120%);
+  opacity: 0;
+  transition: transform var(--transition-spring), opacity var(--transition-base);
+  max-width: 360px;
+  border-left: 3px solid var(--color-ink-black);
+}
+.toast.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+.toast.removing {
+  transform: translateX(120%);
+  opacity: 0;
+}
+
+.toast--success {
+  border-left-color: var(--color-success);
+}
+.toast--error {
+  border-left-color: var(--color-danger);
+}
+.toast--warning {
+  border-left-color: var(--color-warning);
+}
+.toast--info {
+  border-left-color: var(--color-link-blue);
+}
+
+.toast__icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.toast--success .toast__icon { color: var(--color-success); }
+.toast--error .toast__icon { color: var(--color-danger); }
+.toast--warning .toast__icon { color: var(--color-warning); }
+.toast--info .toast__icon { color: var(--color-link-blue); }
+
+.toast__text {
+  flex: 1;
+  font-size: 14px;
+  font-weight: var(--font-weight-body);
+  color: var(--color-ink-black);
+  line-height: 1.4;
+}
+
+.toast__close {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-slate-gray);
+  flex-shrink: 0;
+  transition: background var(--transition-fast);
+}
+.toast__close:hover {
+  background: var(--color-canvas-cream);
+}
+.toast__close svg {
+  width: 12px;
+  height: 12px;
+}

@@ -1,0 +1,164 @@
+/* ============================================================
+   Base Styles — Reset, Global, View Layout
+   ============================================================ */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-body);
+  font-size: var(--body-size);
+  line-height: var(--body-lh);
+  color: var(--color-ink-black);
+  background-color: var(--color-canvas-cream);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 2-tier layout: GNB / Content (views) */
+#app {
+  display: grid;
+  grid-template-rows: var(--gnb-height) 1fr;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* ── View Switcher ── */
+.view {
+  display: none;
+  overflow: hidden;
+  height: 100%;
+}
+.view.active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Dashboard view: grid + prompt footer */
+.view--dashboard {
+  display: none;
+}
+.view--dashboard.active {
+  display: grid;
+  grid-template-rows: 1fr var(--prompt-height);
+  overflow: hidden;
+}
+
+/* Landing view */
+.view--landing.active {
+  display: block;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ── Scrollbar custom ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-dust-taupe);
+  border-radius: var(--radius-pill);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-slate-gray);
+}
+
+/* ── Selection ── */
+::selection {
+  background: var(--color-primary-blue);
+  color: var(--color-white);
+}
+
+/* ── Typography helpers ── */
+.h1 {
+  font-size: var(--h1-size);
+  font-weight: var(--h1-weight);
+  line-height: var(--h1-lh);
+  letter-spacing: var(--h1-ls);
+}
+.h2 {
+  font-size: var(--h2-size);
+  font-weight: var(--h2-weight);
+  line-height: var(--h2-lh);
+  letter-spacing: var(--h2-ls);
+}
+.h3 {
+  font-size: var(--h3-size);
+  font-weight: var(--h3-weight);
+  line-height: var(--h3-lh);
+  letter-spacing: var(--h3-ls);
+}
+.eyebrow {
+  font-size: var(--eyebrow-size);
+  font-weight: var(--eyebrow-weight);
+  line-height: var(--eyebrow-lh);
+  letter-spacing: var(--eyebrow-ls);
+  text-transform: uppercase;
+}
+
+/* ── Button base ── */
+button {
+  font-family: var(--font-primary);
+  font-weight: var(--nav-weight);
+  font-size: var(--nav-size);
+  letter-spacing: var(--nav-ls);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: none;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+button:active {
+  transform: scale(0.96);
+}
+
+/* ── Input base ── */
+input, textarea, select {
+  font-family: var(--font-primary);
+  font-size: var(--body-size);
+  font-weight: var(--font-weight-body);
+  outline: none;
+  border: none;
+  background: none;
+}
+
+/* ── Visually hidden ── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Dim overlay base ── */
+.dim-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 20, 19, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: var(--z-overlay);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-base);
+}
+.dim-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}

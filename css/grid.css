@@ -1,0 +1,135 @@
+/* ============================================================
+   Grid Canvas — Gridstack Overrides + Empty State
+   ============================================================ */
+
+.grid-canvas {
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--space-2);
+}
+
+/* ── Empty State ── */
+.grid-canvas__empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity var(--transition-slow);
+}
+
+.grid-canvas__empty.hidden {
+  opacity: 0;
+}
+
+.grid-canvas__empty-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--color-lifted-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-1);
+}
+.grid-canvas__empty-icon svg {
+  width: 36px;
+  height: 36px;
+  color: var(--color-dust-taupe);
+}
+
+.grid-canvas__empty-title {
+  font-size: var(--h3-size);
+  font-weight: var(--h3-weight);
+  letter-spacing: var(--h3-ls);
+  color: var(--color-dust-taupe);
+  text-align: center;
+}
+
+.grid-canvas__empty-subtitle {
+  font-size: 14px;
+  color: var(--color-slate-gray);
+  text-align: center;
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+/* ── Gridstack Overrides ── */
+.grid-stack {
+  min-height: 100%;
+}
+
+.grid-stack-item {
+  /* Override gridstack default styling */
+}
+
+.grid-stack > .grid-stack-item > .grid-stack-item-content {
+  background: var(--color-white);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(209, 205, 199, 0.3);
+  transition: box-shadow var(--transition-base);
+  inset: 6px;
+}
+
+.grid-stack > .grid-stack-item > .grid-stack-item-content:hover {
+  box-shadow: var(--shadow-2);
+}
+
+/* ── Drag handle ── */
+.grid-stack > .grid-stack-item > .grid-stack-item-content .widget-header {
+  cursor: grab;
+}
+.grid-stack > .grid-stack-item > .grid-stack-item-content .widget-header:active {
+  cursor: grabbing;
+}
+
+/* ── Resize handle override ── */
+.grid-stack > .grid-stack-item > .ui-resizable-se,
+.grid-stack > .grid-stack-item > .ui-resizable-sw {
+  width: 24px !important;
+  height: 24px !important;
+  bottom: 8px !important;
+  right: 8px !important;
+  background: none !important;
+}
+
+.grid-stack > .grid-stack-item > .ui-resizable-se::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 12px;
+  height: 12px;
+  border-right: 2px solid var(--color-dust-taupe);
+  border-bottom: 2px solid var(--color-dust-taupe);
+  border-radius: 0 0 3px 0;
+  transition: border-color var(--transition-fast);
+}
+
+.grid-stack > .grid-stack-item:hover > .ui-resizable-se::after {
+  border-color: var(--color-slate-gray);
+}
+
+/* ── Placeholder (while dragging) ── */
+.grid-stack-placeholder > .placeholder-content {
+  background: var(--color-lifted-cream) !important;
+  border: 2px dashed var(--color-dust-taupe) !important;
+  border-radius: var(--radius-card) !important;
+}
+
+/* ── Animation ── */
+.grid-stack-item {
+  transition: none;
+}
+.grid-stack-animate .grid-stack-item {
+  transition: left 0.3s ease, top 0.3s ease, width 0.3s ease, height 0.3s ease !important;
+}

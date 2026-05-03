@@ -1,0 +1,144 @@
+/* ============================================================
+   TradingView Design Tokens
+   ============================================================ */
+
+:root {
+  /* ── Primary ── */
+  --color-ink-black: #141413;
+  --color-primary-blue: #2962FF;
+  --color-primary-blue-light: #5B8DEF;
+
+  /* ── Secondary & Accent ── */
+  --color-signal-orange: #CF4500;
+  --color-light-signal-orange: #F37338;
+  --color-clay-brown: #9A3A0A;
+
+  /* ── Surface & Background ── */
+  --color-canvas-cream: #F3F0EE;
+  --color-lifted-cream: #FCFBFA;
+  --color-white: #FFFFFF;
+  --color-soft-bone: #F4F4F4;
+  --color-ghost-cream: #E8E2DA;
+
+  /* ── Neutrals & Text ── */
+  --color-charcoal: #262627;
+  --color-slate-gray: #696969;
+  --color-granite: #555555;
+  --color-graphite: #565656;
+  --color-dust-taupe: #D1CDC7;
+
+  /* ── Semantic ── */
+  --color-link-blue: #3860BE;
+  --color-success: #2D8A56;
+  --color-danger: #C0392B;
+  --color-warning: #E67E22;
+
+  /* ── Typography ── */
+  --font-primary: 'Sofia Sans', Arial, sans-serif;
+  --font-weight-light: 400;
+  --font-weight-body: 450;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  /* H1 Hero */
+  --h1-size: 64px;
+  --h1-weight: 500;
+  --h1-lh: 64px;
+  --h1-ls: -1.28px;
+
+  /* H2 Section */
+  --h2-size: 36px;
+  --h2-weight: 500;
+  --h2-lh: 44px;
+  --h2-ls: -0.72px;
+
+  /* H3 Card Title */
+  --h3-size: 24px;
+  --h3-weight: 500;
+  --h3-lh: 28.8px;
+  --h3-ls: -0.48px;
+
+  /* Eyebrow */
+  --eyebrow-size: 14px;
+  --eyebrow-weight: 700;
+  --eyebrow-lh: 14px;
+  --eyebrow-ls: 0.56px;
+
+  /* Body */
+  --body-size: 16px;
+  --body-weight: 450;
+  --body-lh: 22.4px;
+  --body-ls: normal;
+
+  /* Nav/Button */
+  --nav-size: 16px;
+  --nav-weight: 500;
+  --nav-lh: 16px;
+  --nav-ls: -0.48px;
+
+  /* Small */
+  --small-size: 13px;
+  --small-weight: 400;
+  --small-lh: 18px;
+
+  /* ── Border Radius ── */
+  --radius-micro: 4px;
+  --radius-button: 20px;
+  --radius-consent: 24px;
+  --radius-card: 40px;
+  --radius-circle: 50%;
+  --radius-pill: 999px;
+
+  /* ── Spacing (8px base) ── */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+  --space-8: 64px;
+  --space-12: 96px;
+  --space-16: 128px;
+
+  /* ── Shadows (atmospheric) ── */
+  --shadow-0: none;
+  --shadow-1: rgba(0, 0, 0, 0.04) 0px 4px 24px 0px;
+  --shadow-2: rgba(0, 0, 0, 0.08) 0px 24px 48px 0px;
+  --shadow-3: rgba(0, 0, 0, 0.25) 0px 70px 110px 0px;
+
+  /* ── Transitions ── */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Layout ── */
+  --gnb-height: 64px;
+  --prompt-height: 80px;
+  --grid-gap: 16px;
+  --grid-columns: 12;
+
+  /* ── Z-Index ── */
+  --z-base: 1;
+  --z-widget: 10;
+  --z-gnb: 100;
+  --z-overlay: 500;
+  --z-modal: 1000;
+  --z-toast: 2000;
+  --z-smart-focus: 1500;
+
+  /* ── Aliases (shorthand) ── */
+  --cream: var(--color-canvas-cream);
+  --surface: var(--color-white);
+  --ink: var(--color-ink-black);
+  --text-secondary: var(--color-slate-gray);
+  --text-tertiary: var(--color-dust-taupe);
+  --text-muted: var(--color-dust-taupe);
+  --border-soft: rgba(209, 205, 199, 0.3);
+  --shadow-level1: var(--shadow-1);
+  --shadow-level2: var(--shadow-2);
+  --radius-stadium: var(--radius-card);
+  --signal-orange: var(--color-signal-orange);
+  --lifted: var(--color-lifted-cream);
+  --canvas: var(--color-canvas-cream);
+}

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="DeepSR — AI-powered analytics dashboard with real-time market insights, customizable widget grid, and intelligent signal processing.">
+  <title>DeepSR | AI Analytics Dashboard</title>
+
+  <!-- Google Fonts — Sofia Sans Variable -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sofia+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Gridstack.js -->
+  <link href="https://cdn.jsdelivr.net/npm/gridstack@10/dist/gridstack.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gridstack@10/dist/gridstack-all.js"></script>
+
+  <!-- TradingView Lightweight Charts -->
+  <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+
+  <!-- App CSS -->
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/report.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ════════════════════════════════════════════
+       GNB — Global Navigation Bar (Always Visible)
+       ════════════════════════════════════════════ -->
+  <header class="gnb" id="gnb">
+    <div class="gnb__pill">
+      <!-- Logo -->
+      <div class="gnb__logo">
+        <svg class="gnb__logo-icon" viewBox="0 0 36 28" width="28" height="22" fill="none">
+          <path d="M14 0L0 14h8v14h12V14h8L14 0z" fill="#2962FF"/>
+          <path d="M28 0l-8 8h5v12h6V8h5L28 0z" fill="#2962FF" opacity="0.5"/>
+        </svg>
+        <span class="gnb__logo-text">DeepSR</span>
+      </div>
+
+      <!-- Center: Navigation Tabs -->
+      <div class="gnb__center">
+        <nav class="gnb__tabs">
+          <button class="gnb__tab active" data-view="landing" id="gnb-tab-landing">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            홈
+          </button>
+          <button class="gnb__tab" data-view="dashboard" id="gnb-tab-dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+            대시보드
+          </button>
+          <button class="gnb__tab" data-view="report" id="gnb-tab-report">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            리포트
+          </button>
+        </nav>
+
+        <!-- Template selector (only in dashboard view) -->
+        <div class="gnb__template-select" id="gnb-template-wrapper" style="display:none;">
+          <button class="gnb__template-btn" id="gnb-template-btn">
+            <span id="gnb-template-name">사용자 지정</span>
+            <svg class="gnb__template-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="gnb__template-dropdown" id="gnb-template-dropdown"></div>
+        </div>
+      </div>
+
+      <!-- Right: Actions -->
+      <div class="gnb__actions">
+        <div class="gnb__ws-badge gnb__ws-badge--connected" id="gnb-ws-badge">
+          <span class="gnb__ws-dot"></span>
+          <span id="gnb-ws-text">연결됨</span>
+        </div>
+        <button class="gnb__action-btn" id="gnb-share-btn" title="스냅샷 공유">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </button>
+        <button class="gnb__action-btn" id="gnb-settings-btn" title="환경설정">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ════════════════════════════════════════════
+       VIEW 1: Landing — Market Overview
+       ════════════════════════════════════════════ -->
+  <div class="view view--landing active" id="view-landing">
+    <div class="landing">
+
+      <!-- Market Time Banner -->
+      <div class="landing__time-bar">
+        <div class="landing__clock" id="landing-clock"></div>
+        <div class="landing__market-status">
+          <span class="landing__status-dot" id="landing-kr-dot"></span>
+          <span id="landing-kr-status">KR 장 마감</span>
+          <span class="landing__status-sep">·</span>
+          <span class="landing__status-dot" id="landing-us-dot"></span>
+          <span id="landing-us-status">US 장 마감</span>
+        </div>
+      </div>
+
+      <!-- Section: Market Indices -->
+      <section class="landing__section">
+        <div class="landing__section-header">
+          <h2 class="landing__section-title">
+            <span class="landing__accent-dot"></span>
+            글로벌 시장 지표
+          </h2>
+        </div>
+        <div class="landing__indices-grid" id="landing-indices">
+          <!-- Populated by landing.js -->
+        </div>
+      </section>
+
+      <!-- Section: Exchange Rates -->
+      <section class="landing__section">
+        <div class="landing__section-header">
+          <h2 class="landing__section-title">
+            <span class="landing__accent-dot"></span>
+            환율
+          </h2>
+        </div>
+        <div class="landing__fx-grid" id="landing-fx">
+          <!-- Populated by landing.js -->
+        </div>
+      </section>
+
+      <!-- Section: Top 5 by Market Cap -->
+      <section class="landing__section landing__section--tables">
+        <div class="landing__top5-container">
+          <!-- KOSPI Top 5 -->
+          <div class="landing__top5-panel">
+            <div class="landing__top5-header">
+              <h3 class="landing__top5-title">
+                <span class="landing__flag">🇰🇷</span>
+                KOSPI 시가총액 Top 5
+              </h3>
+            </div>
+            <table class="landing__table" id="landing-table-kospi">
+              <thead>
+                <tr>
+                  <th>#</th><th>종목</th><th>현재가</th><th>등락률</th><th>시가총액</th><th>거래대금</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <!-- KOSDAQ Top 5 -->
+          <div class="landing__top5-panel">
+            <div class="landing__top5-header">
+              <h3 class="landing__top5-title">
+                <span class="landing__flag">🇰🇷</span>
+                KOSDAQ 시가총액 Top 5
+              </h3>
+            </div>
+            <table class="landing__table" id="landing-table-kosdaq">
+              <thead>
+                <tr>
+                  <th>#</th><th>종목</th><th>현재가</th><th>등락률</th><th>시가총액</th><th>거래대금</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <!-- NASDAQ Top 5 -->
+          <div class="landing__top5-panel">
+            <div class="landing__top5-header">
+              <h3 class="landing__top5-title">
+                <span class="landing__flag">🇺🇸</span>
+                NASDAQ 시가총액 Top 5
+              </h3>
+            </div>
+            <table class="landing__table" id="landing-table-nasdaq">
+              <thead>
+                <tr>
+                  <th>#</th><th>종목</th><th>현재가</th><th>등락률</th><th>시가총액</th><th>거래대금</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <!-- S&P 500 Top 5 -->
+          <div class="landing__top5-panel">
+            <div class="landing__top5-header">
+              <h3 class="landing__top5-title">
+                <span class="landing__flag">🇺🇸</span>
+                S&P 500 시가총액 Top 5
+              </h3>
+            </div>
+            <table class="landing__table" id="landing-table-sp500">
+              <thead>
+                <tr>
+                  <th>#</th><th>종목</th><th>현재가</th><th>등락률</th><th>시가총액</th><th>거래대금</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- .landing -->
+  </div><!-- #view-landing -->
+
+
+  <!-- ════════════════════════════════════════════
+       VIEW 2: Dashboard — Grid Workspace
+       ════════════════════════════════════════════ -->
+  <div class="view view--dashboard" id="view-dashboard">
+    <main class="grid-canvas" id="grid-canvas">
+      <div class="grid-canvas__empty" id="grid-empty">
+        <div class="grid-canvas__empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg>
+        </div>
+        <div class="grid-canvas__empty-title">프롬프트 창에 명령어를 입력하세요</div>
+        <div class="grid-canvas__empty-subtitle">
+          예시: "삼성전자 차트", "RSI 분석", "시장 브리핑"<br>
+          또는 상단의 템플릿을 선택하세요
+        </div>
+      </div>
+      <div class="grid-stack"></div>
+    </main>
+
+    <!-- Prompt — Command Center -->
+    <footer class="prompt" id="prompt">
+      <div class="prompt__container">
+        <div class="prompt__input-wrapper">
+          <div class="prompt__suggestions" id="prompt-suggestions"></div>
+          <input type="text" class="prompt__input" id="prompt-input" placeholder="명령어를 입력하세요... (예: 삼성전자 차트, RSI 분석)" autocomplete="off">
+          <button class="prompt__send-btn" id="prompt-send" title="전송">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+          <div class="prompt__loader"><div class="prompt__spinner"></div></div>
+        </div>
+      </div>
+    </footer>
+  </div><!-- #view-dashboard -->
+
+
+  <!-- ════════════════════════════════════════════
+       VIEW 3: Report — Analysis Report
+       ════════════════════════════════════════════ -->
+  <div class="view view--report" id="view-report">
+    <div class="report" id="report-content">
+      <!-- Populated by report.js -->
+    </div>
+  </div><!-- #view-report -->
+
+</div><!-- #app -->
+
+
+<!-- ════════════════════════════════════════════
+     Overlays
+     ════════════════════════════════════════════ -->
+<div class="smart-focus" id="smart-focus">
+  <div class="smart-focus__backdrop" id="smart-focus-backdrop"></div>
+  <div class="smart-focus__content" id="smart-focus-content">
+    <button class="smart-focus__close" id="smart-focus-close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="settings-modal" id="settings-modal">
+  <div class="settings-modal__backdrop" id="settings-backdrop"></div>
+  <div class="settings-modal__card">
+    <div class="settings-modal__header">
+      <h2 class="settings-modal__title">환경설정</h2>
+      <button class="settings-modal__close" id="settings-close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- LLM Settings -->
+    <div class="settings-modal__group">
+      <div class="settings-modal__group-title">🤖 LLM 설정</div>
+      <div class="settings-modal__field">
+        <label class="settings-modal__label">Provider</label>
+        <select class="settings-modal__select" id="settings-llm-provider">
+          <option value="openai">OpenAI</option>
+          <option value="anthropic">Anthropic</option>
+          <option value="google">Google (Gemini)</option>
+        </select>
+      </div>
+      <div class="settings-modal__field">
+        <label class="settings-modal__label">모델</label>
+        <select class="settings-modal__select" id="settings-llm-model">
+          <option value="gpt-4o">GPT-4o</option>
+          <option value="gpt-4o-mini">GPT-4o Mini</option>
+          <option value="claude-sonnet">Claude Sonnet 4</option>
+          <option value="gemini-pro">Gemini 2.5 Pro</option>
+        </select>
+      </div>
+      <div class="settings-modal__field">
+        <label class="settings-modal__label">API Key</label>
+        <input type="password" class="settings-modal__input" id="settings-llm-key" placeholder="LLM API 키를 입력하세요" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Market Data Settings -->
+    <div class="settings-modal__group">
+      <div class="settings-modal__group-title">📊 금융 데이터 설정</div>
+      <div class="settings-modal__field">
+        <label class="settings-modal__label">Provider</label>
+        <select class="settings-modal__select" id="settings-market-provider">
+          <option value="alpha_vantage">Alpha Vantage</option>
+          <option value="yahoo">Yahoo Finance</option>
+          <option value="korea_invest">한국투자증권</option>
+        </select>
+      </div>
+      <div class="settings-modal__field">
+        <label class="settings-modal__label">API Key</label>
+        <input type="password" class="settings-modal__input" id="settings-market-key" placeholder="금융 데이터 API 키를 입력하세요" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="settings-modal__byok-notice">
+      🔒 키는 브라우저 로컬에만 암호화 저장됩니다. 서버로 전송되지 않습니다 (BYOK).
+    </div>
+    <button class="settings-modal__save" id="settings-save">저장</button>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+
+<!-- JavaScript — Load Order -->
+<script src="js/store.js"></script>
+<script src="js/mock-data.js"></script>
+<script src="js/templates.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/modal.js"></script>
+<script src="js/widget.js"></script>
+<script src="js/grid.js"></script>
+<script src="js/gnb.js"></script>
+<script src="js/prompt.js"></script>
+<script src="js/websocket.js"></script>
+<script src="js/landing.js"></script>
+<script src="js/report.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

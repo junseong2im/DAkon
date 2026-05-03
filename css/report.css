@@ -1,0 +1,397 @@
+/* ============================================================
+   Report View — Analysis Report Page
+   ============================================================ */
+
+.view--report {
+  overflow-y: auto;
+  padding: 0 24px 48px;
+}
+
+.report {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Empty State ── */
+.report__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 16px;
+  color: var(--text-muted);
+}
+.report__empty-icon {
+  width: 56px;
+  height: 56px;
+  background: var(--surface);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.report__empty-icon svg {
+  width: 28px;
+  height: 28px;
+  stroke: var(--text-muted);
+}
+.report__empty-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.report__empty-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ── Report Header ── */
+.report__header {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  padding: 32px;
+  box-shadow: var(--shadow-level1);
+  border: 1px solid rgba(209, 205, 199, 0.3);
+}
+.report__header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.report__title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.48px;
+}
+.report__meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+.report__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.report__badge--ai {
+  background: rgba(41, 98, 255, 0.1);
+  color: #2962FF;
+}
+.report__export-btn {
+  padding: 8px 20px;
+  border-radius: 20px;
+  background: var(--ink);
+  color: var(--canvas);
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.report__export-btn:hover {
+  opacity: 0.85;
+}
+
+/* ── Section Container ── */
+.report__section {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  box-shadow: var(--shadow-level1);
+  border: 1px solid rgba(209, 205, 199, 0.3);
+}
+.report__section-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.56px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.report__section-title::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--signal-orange);
+}
+
+/* ── Market Overview Grid ── */
+.report__market-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+.report__market-item {
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--lifted);
+  text-align: center;
+}
+.report__market-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.report__market-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.report__market-change {
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+.report__market-change.up { color: #dc2626; }
+.report__market-change.down { color: #2563eb; }
+
+/* ── Indicator Cards ── */
+.report__indicators {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+.report__indicator-card {
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--lifted);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.report__indicator-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.report__indicator-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.report__indicator-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.report__indicator-signal {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.report__indicator-signal.buy { background: rgba(34,197,94,0.15); color: #16a34a; }
+.report__indicator-signal.sell { background: rgba(239,68,68,0.15); color: #ef4444; }
+.report__indicator-signal.hold { background: rgba(234,179,8,0.15); color: #ca8a04; }
+.report__indicator-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── Score Section ── */
+.report__score-container {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 8px 0;
+}
+.report__score-gauge {
+  flex-shrink: 0;
+}
+.report__score-info {
+  flex: 1;
+}
+.report__score-value {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.report__score-label {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.report__score-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  line-height: 1.6;
+}
+
+/* ── Insight Items ── */
+.report__insights {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.report__insight-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--lifted);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.report__insight-bullet {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(41, 98, 255, 0.1);
+  color: #2962FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ── Conflict Section ── */
+.report__conflict {
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  background: rgba(249, 115, 22, 0.03);
+}
+.report__conflict-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ea580c;
+  margin-bottom: 12px;
+}
+.report__conflict-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--ink);
+}
+.report__conflict-result {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: rgba(249, 115, 22, 0.06);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ── Disclaimer ── */
+.report__disclaimer {
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: var(--lifted);
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* ── Print Styles ── */
+@media print {
+  /* Reset layout constraints for printing */
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  #app {
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  /* Hide all non-report elements */
+  .gnb,
+  .prompt,
+  .toast-container,
+  .smart-focus,
+  .settings-modal,
+  .view--landing,
+  .view--dashboard {
+    display: none !important;
+  }
+
+  /* Force report view visible */
+  .view--report {
+    display: block !important;
+    overflow: visible !important;
+    height: auto !important;
+    padding: 0 !important;
+  }
+
+  .report {
+    max-width: 100% !important;
+    gap: 16px !important;
+  }
+
+  /* Cards: remove shadow, ensure border, allow page breaks */
+  .report__header,
+  .report__section {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+    border-radius: 8px !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    padding: 16px !important;
+  }
+
+  /* Ensure backgrounds print */
+  .report__market-item,
+  .report__indicator-card,
+  .report__insight-item,
+  .report__disclaimer,
+  .report__conflict {
+    background: #f8f8f8 !important;
+  }
+
+  .report__indicator-signal.buy { background: rgba(34,197,94,0.15) !important; }
+  .report__indicator-signal.sell { background: rgba(239,68,68,0.15) !important; }
+  .report__indicator-signal.hold { background: rgba(234,179,8,0.15) !important; }
+  .report__insight-bullet { background: rgba(41,98,255,0.1) !important; }
+
+  /* Hide export button in print */
+  .report__export-btn {
+    display: none !important;
+  }
+
+  /* SVG gauge: ensure it prints */
+  .report__score-gauge {
+    width: 120px !important;
+    height: 120px !important;
+  }
+}
