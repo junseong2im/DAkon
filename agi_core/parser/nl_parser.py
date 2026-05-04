@@ -409,8 +409,11 @@ def parse_query_fallback(user_input: str) -> ParsedQuery:
     LLM 없이 규칙 기반으로 자연어를 파싱합니다.
     LLM 호출 실패 시 폴백으로 사용됩니다.
 
-    200+ 종목 매핑 + 동적 정규식 추출로 대부분의 질의를 처리합니다.
-    매핑에 없는 종목은 사용자 입력에서 종목명을 추출하여 그대로 반환합니다.
+    매핑 테이블은 "빠른 캐시"이며, 매핑에 없는 종목은
+    사용자 입력에서 종목명을 추출하여 그대로 반환합니다.
+    백엔드에서 yfinance 등으로 실제 종목코드를 검색합니다.
+
+    → 검색 가능 종목 수 제한 없음 (증권사와 동일)
 
     Args:
         user_input: 사용자 자연어 질의
@@ -420,7 +423,30 @@ def parse_query_fallback(user_input: str) -> ParsedQuery:
     """
     text = user_input.strip().lower()
 
-    # ── 1) 티커 추출: 매핑 테이블 우선 ──
+    # ── 1) 기간 추출 (먼저 추출하여 종목명 혼동 방지) ──
+    period = None
+    for keyword, p in _PERIOD_MAP.items():
+        if keyword in text:
+            period = p
+            break
+    if period is None:
+        period = _extract_period_dynamic(text) or "3mo"
+
+    # ── 2) 차트 타입 추출 ──
+    chart_type = "candlestick"
+    for keyword, ct in _CHART_TYPE_MAP.items():
+        if keyword in text:
+            chart_type = ct
+            break
+
+    # ── 3) 지표 추출 ──
+    indicators_set: set[str] = set()
+    for keyword, ind in _INDICATOR_MAP.items():
+        if keyword in text:
+            indicators_set.add(ind)
+    indicators = list(indicators_set) if indicators_set else ["volume"]
+
+    # ── 4) 종목명 추출: 매핑 테이블 캐시 우선 ──
     ticker = None
     asset_type = "stock"
 
@@ -432,40 +458,43 @@ def parse_query_fallback(user_input: str) -> ParsedQuery:
                 asset_type = "crypto"
             break
 
-    # ── 2) 매핑 실패 → 동적 추출 ──
+    # ── 5) 매핑 실패 → 동적 추출 ──
     if ticker is None:
         ticker, asset_type = _extract_ticker_dynamic(text, user_input)
 
-    # ── 3) 최종 폴백: 입력 원문에서 첫 단어 사용 (AAPL 대신) ──
+    # ── 6) 최종 폴백: 키워드 제거 후 남은 핵심어 추출 ──
     if ticker is None:
-        # 첫 번째 의미있는 단어를 추출
+        # 기간/차트/지표/동사 키워드를 전부 제거하고 남은 걸 종목명으로
+        cleaned = text
+        # 기간 키워드 제거
+        for kw in _PERIOD_MAP:
+            cleaned = cleaned.replace(kw, "")
+        # 동적 기간 패턴 제거
+        cleaned = re.sub(r'\d+\s*(일|주일?|주|개월|달|년)', '', cleaned)
+        # 차트 키워드 제거
+        for kw in _CHART_TYPE_MAP:
+            cleaned = cleaned.replace(kw, "")
+        # 지표 키워드 제거
+        for kw in _INDICATOR_MAP:
+            cleaned = cleaned.replace(kw, "")
+        # 일반 동사/조사 제거
+        noise_words = ["주가", "차트", "분석", "시세", "보여줘", "띄워줘", "알려줘",
+                       "보여", "띄워", "알려", "비교", "수익률", "으로", "치", "줘",
+                       "해줘", "의", "을", "를", "이", "가", "은", "는", "도", "에"]
+        for w in noise_words:
+            cleaned = cleaned.replace(w, "")
+        # 남은 텍스트에서 종목명 추출
+        remaining = cleaned.strip()
+        if remaining:
+            # 공백으로 분리 후 가장 긴 의미있는 단어
+            words = [w.strip() for w in re.findall(r'[가-힣A-Za-z0-9\-]+', remaining) if len(w.strip()) >= 2]
+            if words:
+                ticker = words[0]
+
+    # 정말 아무것도 못 찾으면 원문 첫 단어
+    if ticker is None:
         words = re.findall(r'[가-힣A-Za-z0-9\-]+', user_input)
         ticker = words[0] if words else user_input.strip()
-
-    # ── 기간 추출: 정적 매핑 → 동적 정규식 ──
-    period = None
-    for keyword, p in _PERIOD_MAP.items():
-        if keyword in text:
-            period = p
-            break
-    if period is None:
-        period = _extract_period_dynamic(text) or "3mo"
-
-    # ── 차트 타입 추출 ──
-    chart_type = "candlestick"
-    for keyword, ct in _CHART_TYPE_MAP.items():
-        if keyword in text:
-            chart_type = ct
-            break
-
-    # ── 지표 추출 (중복 방지) ──
-    indicators_set: set[str] = set()
-    remaining_text = text
-    for keyword, ind in _INDICATOR_MAP.items():
-        if keyword in remaining_text:
-            indicators_set.add(ind)
-            remaining_text = remaining_text.replace(keyword, "", 1)
-    indicators = list(indicators_set) if indicators_set else ["volume"]
 
     return ParsedQuery(
         target_ticker=ticker,
