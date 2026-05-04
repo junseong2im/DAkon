@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h2>WebSocket Test</h2>
+  <pre id="log"></pre>
+
+  <script>
+    const log = document.getElementById("log");
+
+    // WebSocket 연결
+    const ws = new WebSocket("ws://127.0.0.1:8000/ws/market/AAPL");
+
+    // 연결되면
+    ws.onopen = () => {
+      log.textContent += "connected\n";
+    };
+
+    // 데이터 받을 때
+    ws.onmessage = (event) => {
+      log.textContent += event.data + "\n";
+    };
+  </script>
+</body>
+</html>
