@@ -11,6 +11,9 @@ const Store = (() => {
     nextWidgetId: 1,
   };
 
+  const API_BASE = 'https://dakon.onrender.com';
+  const WS_BASE = 'wss://dakon.onrender.com';
+
   const listeners = {};
 
   function on(event, callback) {
@@ -91,5 +94,7 @@ const Store = (() => {
     setTemplate,
     setApiKey,
     setWsStatus,
+    API_BASE,
+    WS_BASE,
   };
 })();

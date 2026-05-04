@@ -120,26 +120,50 @@ const Prompt = (() => {
     },
   ];
 
-  /* ── Default fallback: try as stock name → candlestick ── */
-  function parseCommand(input) {
+  /* ── Server API call for parsing ── */
+  async function parseCommand(input) {
     const trimmed = input.trim();
     if (!trimmed) return null;
+    
+    try {
+      const apiKey = Store.getState().apiKey;
+      const headers = { 'Content-Type': 'application/json' };
+      if (apiKey) headers['X-LLM-Key'] = apiKey;
 
-    for (const pattern of patterns) {
-      const match = trimmed.match(pattern.regex);
-      if (match) {
-        return pattern.handler(match);
-      }
+      const res = await fetch(`${Store.API_BASE}/api/v1/query`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ prompt: trimmed })
+      });
+
+      if (!res.ok) throw new Error('Query API failed');
+      const data = await res.json();
+      
+      const config = data.data;
+      
+      // Transform backend config to frontend widget format
+      return {
+        type: config.type || (config.required_indicators ? 'scorecard' : 'chart'),
+        chartType: config.chart_type || 'candlestick',
+        title: input,
+        ticker: config.target_ticker,
+        period: config.period || '3mo',
+        indicators: config.required_indicators || [],
+        source: 'realtime',
+        gs: { w: 6, h: 4 },
+      };
+    } catch (e) {
+      console.error(e);
+      // Fallback
+      return {
+        type: 'chart',
+        chartType: 'candlestick',
+        title: trimmed,
+        ticker: 'AAPL',
+        source: 'realtime',
+        gs: { w: 6, h: 4 },
+      };
     }
-
-    /* Fallback: treat as stock name */
-    return {
-      type: 'chart',
-      chartType: 'candlestick',
-      title: trimmed,
-      source: 'realtime',
-      gs: { w: 6, h: 4 },
-    };
   }
 
   /* ── Init ── */
@@ -170,31 +194,30 @@ const Prompt = (() => {
     setupSuggestions(inputEl);
   }
 
-  function submit(inputEl, promptEl) {
+  async function submit(inputEl, promptEl) {
     if (isLoading) return;
 
     const value = inputEl.value.trim();
     if (!value) return;
-
-    const config = parseCommand(value);
-    if (!config) {
-      Toast.show('명령을 이해하지 못했습니다. 다시 입력해주세요.', 'warning');
-      return;
-    }
 
     /* Show loading state */
     isLoading = true;
     if (promptEl) promptEl.classList.add('loading');
     inputEl.value = '';
 
-    /* Simulate backend delay */
-    const delay = 800 + Math.random() * 1200;
-    setTimeout(() => {
-      Grid.addWidget(config);
+    const config = await parseCommand(value);
+    
+    if (!config) {
+      Toast.show('명령을 이해하지 못했습니다. 다시 입력해주세요.', 'warning');
       isLoading = false;
       if (promptEl) promptEl.classList.remove('loading');
-      Toast.show(`"${config.title}" 위젯이 생성되었습니다.`, 'success');
-    }, delay);
+      return;
+    }
+
+    Grid.addWidget(config);
+    isLoading = false;
+    if (promptEl) promptEl.classList.remove('loading');
+    Toast.show(`"${config.title}" 위젯이 생성되었습니다.`, 'success');
   }
 
   /* ── Suggestions ── */
