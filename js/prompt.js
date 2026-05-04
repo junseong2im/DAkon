@@ -142,27 +142,46 @@ const Prompt = (() => {
       const config = data.data;
       
       // Transform backend config to frontend widget format
-      return {
-        type: config.type || (config.required_indicators ? 'scorecard' : 'chart'),
+      const widgets = [];
+      const hasIndicators = config.required_indicators && config.required_indicators.length > 0;
+      const isChartRequested = config.type === 'chart' || !hasIndicators;
+
+      // 항상 차트는 기본으로 띄우기 (사용자 요청 반영)
+      widgets.push({
+        type: 'chart',
         chartType: config.chart_type || 'candlestick',
         title: input,
         ticker: config.target_ticker,
         period: config.period || '3mo',
-        indicators: config.required_indicators || [],
         source: 'realtime',
         gs: { w: 6, h: 4 },
-      };
+      });
+
+      // 지표 분석(RSI 등) 요청이 있었으면 분석 카드도 같이 띄우기
+      if (hasIndicators) {
+        widgets.push({
+          type: 'scorecard',
+          title: `${config.target_ticker} 분석`,
+          ticker: config.target_ticker,
+          period: config.period || '3mo',
+          indicators: config.required_indicators,
+          source: 'realtime',
+          gs: { w: 4, h: 4 },
+        });
+      }
+
+      return widgets;
     } catch (e) {
       console.error(e);
       // Fallback
-      return {
+      return [{
         type: 'chart',
         chartType: 'candlestick',
         title: trimmed,
         ticker: 'AAPL',
         source: 'realtime',
         gs: { w: 6, h: 4 },
-      };
+      }];
     }
   }
 
@@ -205,19 +224,22 @@ const Prompt = (() => {
     if (promptEl) promptEl.classList.add('loading');
     inputEl.value = '';
 
-    const config = await parseCommand(value);
+    const configs = await parseCommand(value);
     
-    if (!config) {
+    if (!configs || configs.length === 0) {
       Toast.show('명령을 이해하지 못했습니다. 다시 입력해주세요.', 'warning');
       isLoading = false;
       if (promptEl) promptEl.classList.remove('loading');
       return;
     }
 
-    Grid.addWidget(config);
+    configs.forEach(config => {
+      Grid.addWidget(config);
+    });
+    
     isLoading = false;
     if (promptEl) promptEl.classList.remove('loading');
-    Toast.show(`"${config.title}" 위젯이 생성되었습니다.`, 'success');
+    Toast.show(`위젯이 생성되었습니다.`, 'success');
   }
 
   /* ── Suggestions ── */
